@@ -162,7 +162,15 @@ class fit_class():
             if self.n >= 1: # DWF O(a) discretization
                 if self.xsb:
                     a1 = p['%s_a1' %self.at]
-                    r += a1*aw0
+                    #r += a1*aw0
+                    term_to_add = a1*aw0
+                    if type(aw0)==np.ndarray:
+                        for idx,aw in enumerate(aw0):
+                            if aw >1e-10:
+                                r[idx]+=term_to_add[idx]
+                    else:
+                        if aw0 >1e-10:
+                            r+=term_to_add
             if self.n >= 2: # nlo
                 c2 = p['%s_c2' %self.at]
                 a2 = p['%s_a2' %self.at]
@@ -170,12 +178,37 @@ class fit_class():
                 r += -1.*epi**2 * g2 *np.log(epi**2) # nlo log
                 # counter terms
                 r += epi**2*c2 # nlo counter term
-                r += (aw0**2/(4.*np.pi))*a2 # nlo discretization
+                #r += (aw0**2/(4.*np.pi))*a2 # nlo discretization
+                term_to_add = (aw0**2/(4.*np.pi))*a2
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
                 if self.alpha:
                     s2 = p['%s_s2' %self.at]
-                    r += x['afs']*(aw0/(4.*np.pi))**2*s2 # nlo alpha_s a^2
+                    #r += x['afs']*(aw0/(4.*np.pi))**2*s2 # nlo alpha_s a^2
+                    term_to_add = x['afs']*(aw0/(4.*np.pi))**2*s2 # nlo alpha_s a^2
+                    if type(aw0)==np.ndarray:
+                        for idx,aw in enumerate(aw0):
+                            if aw >1e-10:
+                                r[idx]+=term_to_add[idx]
+                    else:
+                        if aw0 >1e-10:
+                            r+=term_to_add
+
                 if self.FV:
-                    r += self.dfv(p)
+                    #r += self.dfv(p)
+                    term_to_add = self.dfv(p)
+                    if type(aw0)==np.ndarray:
+                        for idx,aw in enumerate(aw0):
+                            if aw >1e-10:
+                                r[idx]+=term_to_add[idx]
+                    else:
+                        if aw0 >1e-10:
+                            r+=term_to_add
             if self.n >= 3: # nnlo
                 c3 = p['%s_c3' %self.at]
                 r += g0*c3*epi**3 # nnlo log
@@ -184,8 +217,16 @@ class fit_class():
                 b4 = p['%s_b4' %self.at]
                 a4 = p['%s_a4' %self.at]
                 r += epi**4*c4 # nnnlo epi^4
-                r += epi**2*(aw0**2/(4.*np.pi))*b4 # nnnlo epi^2 a^2
-                r += (aw0**4/(4.*np.pi)**2)*a4 # nnnlo a^4
+                #r += epi**2*(aw0**2/(4.*np.pi))*b4 # nnnlo epi^2 a^2
+                #r += (aw0**4/(4.*np.pi)**2)*a4 # nnnlo a^4
+                term_to_add = epi**2*(aw0**2/(4.*np.pi))*b4+(aw0**4/(4.*np.pi)**2)*a4
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
             return r
         def nnnlo_log2_xpt(x,p):
             r = 0
@@ -248,16 +289,40 @@ class fit_class():
                 c2 = p['%s_c2' %self.at]
                 a2 = p['%s_a2' %self.at]
                 r += c2*epi**2
-                r += a2*(aw0**2/(4.*np.pi))
+                #r += a2*(aw0**2/(4.*np.pi))
+                term_to_add = a2*(aw0**2/(4.*np.pi))
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
                 if self.FV:
-                    r += self.dfv(p)
+                    #r += self.dfv(p)
+                    term_to_add = self.dfv(p)
+                    if type(aw0)==np.ndarray:
+                        for idx,aw in enumerate(aw0):
+                            if aw >1e-10:
+                                r[idx]+=term_to_add[idx]
+                    else:
+                        if aw0 >1e-10:
+                            r+=term_to_add
             if self.n >= 4:
                 c4 = p['%s_c4' %self.at]
                 b4 = p['%s_b4' %self.at]
                 a4 = p['%s_a4' %self.at]
                 r += c4*epi**4
-                r += a4*(aw0**4/(4.*np.pi)**2)
-                r += b4*epi**2*(aw0**2/(4.*np.pi))
+                #r += a4*(aw0**4/(4.*np.pi)**2)
+                #r += b4*epi**2*(aw0**2/(4.*np.pi))
+                term_to_add = a4*(aw0**4/(4.*np.pi)**2)+b4*epi**2*(aw0**2/(4.*np.pi))
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
             return r
         elif self.ansatz == 'linear':
             epi = p['epi']
@@ -268,14 +333,38 @@ class fit_class():
                 c2 = p['%s_c2' %self.at]
                 a2 = p['%s_a2' %self.at]
                 r += c2*epi
-                r += a2*(aw0**2/(4.*np.pi))
+                #r += a2*(aw0**2/(4.*np.pi))
+                term_to_add = a2*(aw0**2/(4.*np.pi))
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
                 if self.FV:
-                    r += self.dfv(p)
+                    #r += self.dfv(p)
+                    term_to_add = self.dfv(p)
+                    if type(aw0)==np.ndarray:
+                        for idx,aw in enumerate(aw0):
+                            if aw >1e-10:
+                                r[idx]+=term_to_add[idx]
+                    else:
+                        if aw0 >1e-10:
+                            r+=term_to_add
             if self.n >= 4:
                 c4 = p['%s_c4' %self.at]
                 a4 = p['%s_a4' %self.at]
                 r += c4*epi**2
-                r += a4*(aw0**4/(4.*np.pi)**2)
+                #r += a4*(aw0**4/(4.*np.pi)**2)
+                term_to_add = a4*(aw0**4/(4.*np.pi)**2)
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
             return r
         elif self.ansatz == 'constant':
             epi = p['epi']
@@ -284,12 +373,36 @@ class fit_class():
             r = c0
             if self.n >= 2:
                 a2 = p['%s_a2' %self.at]
-                r += a2*(aw0**2/(4.*np.pi))
+                #r += a2*(aw0**2/(4.*np.pi))
+                term_to_add = a2*(aw0**2/(4.*np.pi))
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
                 if self.FV:
-                    r += self.dfv(p)
+                    #r += self.dfv(p)
+                    term_to_add = self.dfv(p)
+                    if type(aw0)==np.ndarray:
+                        for idx,aw in enumerate(aw0):
+                            if aw >1e-10:
+                                r[idx]+=term_to_add[idx]
+                    else:
+                        if aw0 >1e-10:
+                            r+=term_to_add
             if self.n >= 4:
                 a4 = p['%s_a4' %self.at]
-                r += a4*(aw0**4/(4.*np.pi)**2)
+                #r += a4*(aw0**4/(4.*np.pi)**2)
+                term_to_add = a4*(aw0**4/(4.*np.pi)**2)
+                if type(aw0)==np.ndarray:
+                    for idx,aw in enumerate(aw0):
+                        if aw >1e-10:
+                            r[idx]+=term_to_add[idx]
+                else:
+                    if aw0 >1e-10:
+                        r+=term_to_add
             return r
         else:
             print('need to define fit function')
