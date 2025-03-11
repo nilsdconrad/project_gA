@@ -72,13 +72,13 @@ def format_data(switches, gadf, hqdf):
     ens_list = []
     for e in switches['ensembles']:
         ens = ens_abbr[e]
-        gar = gadf.query("ensemble=='%s'" %ens).sort_values(by='nbs')['ga'].as_matrix()
-        epi = gadf.query("ensemble=='%s'" %ens).sort_values(by='nbs')['epi'].as_matrix()
-        mpl = gadf.query("ensemble=='%s' and nbs==0" %ens)['mpil'].as_matrix()[0]
-        awm = hqdf.query("ensemble=='%s'" %ens)['aw0_mean'].as_matrix()[0]
-        aws = hqdf.query("ensemble=='%s'" %ens)['aw0_sdev'].as_matrix()[0]
-        afs = hqdf.query("ensemble=='%s'" %ens)['alfs'].as_matrix()[0]
-        ed  = hqdf.query("ensemble=='%s'" %ens)['eps_delta'].as_matrix()[0]
+        gar = gadf.query("ensemble=='%s'" %ens).sort_values(by='nbs')['ga'].values
+        epi = gadf.query("ensemble=='%s'" %ens).sort_values(by='nbs')['epi'].values
+        mpl = gadf.query("ensemble=='%s' and nbs==0" %ens)['mpil'].values[0]
+        awm = hqdf.query("ensemble=='%s'" %ens)['aw0_mean'].values[0]
+        aws = hqdf.query("ensemble=='%s'" %ens)['aw0_sdev'].values[0]
+        afs = hqdf.query("ensemble=='%s'" %ens)['alfs'].values[0]
+        ed  = hqdf.query("ensemble=='%s'" %ens)['eps_delta'].values[0]
         d = gv.dataset.avg_data({'gar': gar, 'epi':epi}, bstrap=True)
         gar_list.append(d['gar'])
         epi_list.append(d['epi'])
